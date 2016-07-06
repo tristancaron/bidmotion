@@ -15,6 +15,13 @@ export class SearchResultComponent implements OnInit {
   @Input() metric: string;
   @Input() chartMaxResult: string;
 
+  private _lastTarget: HTMLSpanElement = null;
+  private _carret = {
+    up: '▴',
+    down: '▾',
+    center: '◂'
+  };
+
   data: GeonameModel[] = null;
 
   constructor(private _geonames: GeonamesService) {}
@@ -34,5 +41,29 @@ export class SearchResultComponent implements OnInit {
 
       return null;
     }).filter(x => x !== null);
+  }
+
+  sortColumn(name: string, target: HTMLSpanElement) {
+    if (this._lastTarget !== target) {
+      this.data = this.data.sort((a, b) => {
+        if (a[name] < b[name])
+          return -1;
+        if ([name] > b[name])
+          return 1;
+        return 0;
+      });
+
+      target.innerHTML = this._carret.up;
+      if (this._lastTarget) {
+        this._lastTarget.innerHTML = this._carret.center;
+      }
+      this._lastTarget = target;
+    } else {
+      this.data = this.data.reverse();
+
+      target.innerHTML = target.innerHTML === this._carret.down
+        ? this._carret.up
+        : this._carret.down;
+    }
   }
 }

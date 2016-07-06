@@ -1,10 +1,10 @@
 <table>
   <thead>
     <tr>
-      <th>Continent Name</th>
-      <th>Country Name</th>
-      <th *ngIf="metric === 'ALL' || metric === 'areaInSqKm'">Area in Square Kilometer</th>
-      <th *ngIf="metric === 'ALL' || metric === 'population'">Population</th>
+      <th (click)="sortColumn('continentName', $event.target.lastChild)">Continent Name <span>&#9666;</span></th>
+      <th (click)="sortColumn('countryName', $event.target.lastChild)">Country Name <span>&#9666;</span></th>
+      <th *ngIf="metric === 'ALL' || metric === 'areaInSqKm'" (click)="sortColumn('areaInSqKm', $event.target.lastChild)">Area in Square Kilometer <span>&#9666;</span></th>
+      <th *ngIf="metric === 'ALL' || metric === 'population'" (click)="sortColumn('population', $event.target.lastChild)">Population <span>&#9666;</span></th>
     </tr>
   </thead>
 
