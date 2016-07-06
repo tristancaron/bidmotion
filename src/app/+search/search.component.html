@@ -1,5 +1,5 @@
 <section>
-  <form [formGroup]="queryForm">
+  <form [formGroup]="queryForm" (ngSubmit)="onSubmit()">
     <label>Continent:
       <select formControlName="continent">
         <option value="ALL" selected>All</option>

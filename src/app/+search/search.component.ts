@@ -1,11 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, REACTIVE_FORM_DIRECTIVES } from "@angular/forms";
+import { Router } from "@angular/router";
 
 import { GeonameModel } from "../shared/geoname.model";
 import { GeonamesService } from "../shared/geonames.service";
-import { QueryModel } from "./query.model";
-
-import { Subscription } from "rxjs/Rx";
 
 
 @Component({
@@ -16,34 +14,59 @@ import { Subscription } from "rxjs/Rx";
   directives: [REACTIVE_FORM_DIRECTIVES],
   providers: [GeonamesService]
 })
-export class SearchComponent implements OnInit {
-  private _geonamesSub: Subscription;
+export class SearchComponent implements OnInit, OnDestroy {
+  private _submitClicked: boolean = false;
 
   queryForm = new FormGroup({
     continent: new FormControl('ALL'),
     metric: new FormControl('ALL'),
-    chartMaxResult: new FormControl('ALL'),
+    chartMaxResult: new FormControl('5'),
   });
   continents = [];
 
 
-  constructor(private _geonames: GeonamesService) {}
+  constructor(private _geonames: GeonamesService, private _router: Router) {}
 
   ngOnInit() {
-    this._getContinents();
+    this._getContinents().then(_ => this._handleQueryParameters());
   }
 
-  onSubmit(query: QueryModel) {
+  ngOnDestroy() {
 
   }
 
-  private _getContinents() {
+  onSubmit() {
+    this._submitClicked = true;
+    this._router.navigate(['/search'], {queryParams: this.queryForm.value});
+  }
+
+  private _getContinents(): Promise<any> {
     const unique =
-      (value, index, array) => array.indexOf(value) == index;
+      (value, index, array) => array.indexOf(value) === index;
     const continentNames =
       (data: [GeonameModel]) => data.map(d => d.continentName).filter(unique).sort();
 
 
-    this._geonamesSub = this._geonames.get().map(continentNames).subscribe(data => this.continents = data);
+    return this._geonames.get().map(continentNames).toPromise().then(data => this.continents = data);
+  }
+
+  private _handleQueryParameters() {
+    this._router.routerState.queryParams.subscribe(params => {
+      if (!this._submitClicked) {
+        const filter = (key: string) => {
+          const filters = {
+            continent: value => this.continents.indexOf(value) !== -1 || value === 'ALL',
+            metric: value => ['ALL', 'population', 'areaInSqKm'].indexOf(value) !== -1,
+            chartMaxResult: value => ['5', '10', '15', '20'].indexOf(value) !== -1,
+          };
+
+          return filters[key] && filters[key](params[key]);
+        };
+
+        Object.keys(params).filter(filter).forEach(k => {
+          (<FormControl>this.queryForm.controls[k]).updateValue(params[k]);
+        })
+      }
+    });
   }
 }
