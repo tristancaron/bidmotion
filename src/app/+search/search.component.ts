@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 
 import { GeonameModel } from "../shared/geoname.model";
 import { GeonamesService } from "../shared/geonames.service";
+import { SearchResultComponent } from "../components/search-result/search-result.component";
 
 
 @Component({
@@ -11,11 +12,11 @@ import { GeonamesService } from "../shared/geonames.service";
   selector: 'app-search',
   templateUrl: 'search.component.html',
   styleUrls: ['search.component.css'],
-  directives: [REACTIVE_FORM_DIRECTIVES],
+  directives: [REACTIVE_FORM_DIRECTIVES, SearchResultComponent],
   providers: [GeonamesService]
 })
 export class SearchComponent implements OnInit, OnDestroy {
-  private _submitClicked: boolean = false;
+  submitClicked: boolean = false;
 
   queryForm = new FormGroup({
     continent: new FormControl('ALL'),
@@ -36,7 +37,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    this._submitClicked = true;
+    this.submitClicked = true;
     this._router.navigate(['/search'], {queryParams: this.queryForm.value});
   }
 
@@ -52,7 +53,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   private _handleQueryParameters() {
     this._router.routerState.queryParams.subscribe(params => {
-      if (!this._submitClicked) {
+      if (!this.submitClicked) {
         const filter = (key: string) => {
           const filters = {
             continent: value => this.continents.indexOf(value) !== -1 || value === 'ALL',
