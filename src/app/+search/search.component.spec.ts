@@ -12,9 +12,15 @@ import {
 
 import { SearchComponent } from './search.component';
 
+import { GeonamesService } from "../shared/geonames.service";
+import {provideRouter, Router} from "@angular/router";
+import {routes} from "../app.routes";
+
+beforeEachProviders(() => [GeonamesService, provideRouter(routes)]);
+
 describe('Component: Search', () => {
-  it('should create an instance', () => {
-    let component = new SearchComponent();
+  it('should create an instance', inject([GeonamesService, Router], (service: GeonamesService, router: Router) => {
+    let component = new SearchComponent(service, router);
     expect(component).toBeTruthy();
-  });
+  }));
 });

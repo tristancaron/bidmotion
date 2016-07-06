@@ -1,1 +1,1 @@
-export * from './total-population.pipe';
+export * from './total.pipe';

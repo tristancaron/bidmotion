@@ -6,11 +6,11 @@ import {
   expect, it, xit,
   async, inject
 } from '@angular/core/testing';
-import { TotalPopulationPipe } from './total-population.pipe';
+import { TotalPipe } from './total.pipe';
 
-describe('Pipe: TotalPopulation', () => {
+describe('Pipe: Total', () => {
   it('create an instance', () => {
-    let pipe = new TotalPopulationPipe();
+    let pipe = new TotalPipe();
     expect(pipe).toBeTruthy();
   });
 });

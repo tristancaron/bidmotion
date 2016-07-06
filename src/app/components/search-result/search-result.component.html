@@ -3,8 +3,8 @@
     <tr>
       <th>Continent Name</th>
       <th>Country Name</th>
-      <th>Area in Square Kilometer</th>
-      <th>Population</th>
+      <th *ngIf="metric === 'ALL' || metric === 'areaInSqKm'">Area in Square Kilometer</th>
+      <th *ngIf="metric === 'ALL' || metric === 'population'">Population</th>
     </tr>
   </thead>
 
@@ -12,8 +12,8 @@
     <tr *ngFor="let row of data">
       <td>{{row.continentName}}</td>
       <td>{{row.countryName}}</td>
-      <td>{{row.areaInSqKm}}</td>
-      <td>{{row.population}}</td>
+      <td *ngIf="metric === 'ALL' || metric === 'areaInSqKm'">{{row.areaInSqKm}}</td>
+      <td *ngIf="metric === 'ALL' || metric === 'population'">{{row.population}}</td>
     </tr>
   </tbody>
 
@@ -21,8 +21,8 @@
     <tr>
       <td></td>
       <td></td>
-      <td>TOTAL</td>
-      <td>{{data | totalPopulation}}</td>
+      <td *ngIf="metric === 'ALL' || metric === 'areaInSqKm'">{{data | total: 'areaInSqKm' }}</td>
+      <td *ngIf="metric === 'ALL' || metric === 'population'">{{data | total: 'population' }}</td>
     </tr>
   </tfoot>
 </table>

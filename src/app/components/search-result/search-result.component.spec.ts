@@ -11,10 +11,13 @@ import {
 } from '@angular/core/testing';
 
 import { SearchResultComponent } from './search-result.component';
+import { GeonamesService } from "../../shared/geonames.service";
+
+beforeEachProviders(() => [GeonamesService]);
 
 describe('Component: SearchResult', () => {
-  it('should create an instance', () => {
-    let component = new SearchResultComponent();
+  it('should create an instance', inject([GeonamesService], (service: GeonamesService) => {
+    let component = new SearchResultComponent(service);
     expect(component).toBeTruthy();
-  });
+  }));
 });

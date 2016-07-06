@@ -2,25 +2,37 @@ import {Component, OnInit, Input} from '@angular/core';
 
 import { GeonamesService } from "../../shared/geonames.service";
 import { GeonameModel } from "../../shared/geoname.model";
-import { TotalPopulationPipe } from "../../shared/total-population.pipe";
+import { TotalPipe } from "../../shared/total.pipe";
 
 @Component({
   moduleId: module.id,
   selector: 'app-search-result',
   templateUrl: 'search-result.component.html',
   styleUrls: ['search-result.component.css'],
-  pipes: [TotalPopulationPipe]
+  pipes: [TotalPipe]
 })
 export class SearchResultComponent implements OnInit {
-  @Input() continent: string;
   @Input() metric: string;
   @Input() chartMaxResult: string;
 
-  data: [GeonameModel] = null;
+  data: GeonameModel[] = null;
 
   constructor(private _geonames: GeonamesService) {}
 
   ngOnInit() {
-    this._geonames.get().toPromise().then(d => this.data = d);
+  }
+
+  @Input() set continent(continent: string) {
+    this._geonames.get().toPromise().then(data => {
+      this.data = this._filterData(data, continent);
+    });
+  }
+
+  private _filterData(data: GeonameModel[], continent: string): GeonameModel[] {
+    return data.map(value => {
+      if (continent === 'ALL' || value.continentName === continent) return value;
+
+      return null;
+    }).filter(x => x !== null);
   }
 }
