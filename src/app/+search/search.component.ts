@@ -12,8 +12,7 @@ import { SearchResultComponent } from "../components/search-result/search-result
   selector: 'app-search',
   templateUrl: 'search.component.html',
   styleUrls: ['search.component.css'],
-  directives: [REACTIVE_FORM_DIRECTIVES, SearchResultComponent],
-  providers: [GeonamesService]
+  directives: [REACTIVE_FORM_DIRECTIVES, SearchResultComponent]
 })
 export class SearchComponent implements OnInit, OnDestroy {
   submitClicked: boolean = false;

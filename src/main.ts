@@ -7,6 +7,8 @@ import { HTTP_PROVIDERS } from "@angular/http";
 import { AppComponent, environment } from './app/';
 import { routes } from "./app/app.routes";
 
+import { GeonamesService } from "./app/shared/geonames.service";
+
 if (environment.production) {
   enableProdMode();
 }
@@ -15,5 +17,7 @@ bootstrap(AppComponent, [
   HTTP_PROVIDERS,
   provideRouter(routes),
   provideForms(),
+
+  GeonamesService
 ]);
 

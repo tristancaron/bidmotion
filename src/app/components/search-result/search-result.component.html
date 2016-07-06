@@ -9,10 +9,20 @@
   </thead>
 
   <tbody>
-
+    <tr *ngFor="let row of data">
+      <td>{{row.continentName}}</td>
+      <td>{{row.countryName}}</td>
+      <td>{{row.areaInSqKm}}</td>
+      <td>{{row.population}}</td>
+    </tr>
   </tbody>
 
   <tfoot>
-
+    <tr>
+      <td></td>
+      <td></td>
+      <td>TOTAL</td>
+      <td>{{data | totalPopulation}}</td>
+    </tr>
   </tfoot>
 </table>
