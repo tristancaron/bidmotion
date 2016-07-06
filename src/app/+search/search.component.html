@@ -1,16 +1,16 @@
 <section>
-  <form #query="ngForm" (ngSubmit)="onSubmit(query.value)">
+  <form [formGroup]="queryForm">
     <label>Continent:
-      <select name="continentName" ngModel="ALL">
+      <select formControlName="continent">
         <option value="ALL" selected>All</option>
-        <template ngFor let-continent [ngForOf]="continentNames">
+        <template ngFor let-continent [ngForOf]="continents">
           <option [value]="continent">{{continent}}</option>
         </template>
       </select>
     </label>
 
     <label>Metric:
-      <select name="metric" ngModel="ALL">
+      <select formControlName="metric">
         <option value="ALL" selected>All</option>
         <option value="areaInSqKm">Area in Square Kilometer</option>
         <option value="population">Population</option>
@@ -18,7 +18,7 @@
     </label>
 
     <label>Chart max results:
-      <select name="chartMaxResult" ngModel="5">
+      <select formControlName="chartMaxResult">
         <option value="5" selected>5</option>
         <option value="10">10</option>
         <option value="15">15</option>
