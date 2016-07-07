@@ -7,18 +7,21 @@ import { Observable } from "rxjs/Rx";
 
 @Injectable()
 export class GeonamesService {
-  private _showAlert: boolean;
+  private _showAlert: boolean = false;
   private _apiUrl = "http://api.geonames.org/countryInfoJSON?username=hydrane";
   private _cache: GeonameModel[] = null;
 
   constructor(private _http: Http) {
-    this._showAlert = !!window.localStorage.getItem('showAlert')
+    if (window.location.protocol === 'https:') {
+      this._showAlert = !window.localStorage.getItem('showAlert')
+    }
   }
 
   get(): Observable<GeonameModel[]> {
     if (this._showAlert) {
       alert("Your browser may not support some scripts. Please, click on the shield in your address bar, and let us load scripts.");
       window.localStorage.setItem('showAlert', 'true');
+      this._showAlert = false;
     }
 
     if (this._cache) {

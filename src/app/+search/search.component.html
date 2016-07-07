@@ -29,5 +29,5 @@
     <button type="submit">Go!</button>
   </form>
 
-  <app-search-result *ngIf="submitClicked" [continent]="queryForm.value['continent']" [metric]="queryForm.value['metric']" [chartMaxResult]="queryForm.value['chartMaxResult']"></app-search-result>
+  <app-search-result *ngIf="_submitClicked" [continent]="queryForm.value['continent']" [metric]="queryForm.value['metric']" [chartMaxResult]="queryForm.value['chartMaxResult']"></app-search-result>
 </section>
