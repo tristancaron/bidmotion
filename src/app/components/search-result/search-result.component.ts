@@ -80,7 +80,7 @@ export class SearchResultComponent implements OnInit {
   sortColumn(name: string, target: HTMLSpanElement) {
     if (this._lastTarget !== target) {
       this.data = this.data.sort((a, b) => {
-        if (!isNaN(a[name])) {
+        if (isNaN(a[name])) {
           if (a[name] < b[name])
             return -1;
           if (a[name] > b[name])
