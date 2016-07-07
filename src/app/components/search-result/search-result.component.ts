@@ -153,7 +153,7 @@ export class SearchResultComponent implements OnInit {
         text: 'Population'
       },
       series: [{
-        name: 'Country',
+        name: 'Population',
         colorByPoint: true,
         data: result
       }]
@@ -204,7 +204,7 @@ export class SearchResultComponent implements OnInit {
         text: 'Area in Square Kilometer'
       },
       series: [{
-        name: 'Country',
+        name: 'AreaInSqKm',
         colorByPoint: true,
         data: result
       }]

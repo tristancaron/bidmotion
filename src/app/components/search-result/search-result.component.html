@@ -1,6 +1,7 @@
 <div class="container">
   <div class="item">
     <table>
+      <caption>Result</caption>
       <thead>
       <tr>
         <th (click)="sortColumn('continentName', $event.target.lastChild)">Continent Name <span>&#9666;</span></th>
@@ -12,17 +13,17 @@
 
       <tbody>
       <tr *ngFor="let row of data">
-        <td>{{row.continentName}}</td>
-        <td>{{row.countryName}}</td>
-        <td *ngIf="_metric === 'ALL' || _metric === 'areaInSqKm'">{{row.areaInSqKm}}</td>
-        <td *ngIf="_metric === 'ALL' || _metric === 'population'">{{row.population}}</td>
+        <td data-label="Continent Name">{{row.continentName}}</td>
+        <td data-label="Country Name">{{row.countryName}}</td>
+        <td data-label="Area In Square Kilometer" *ngIf="_metric === 'ALL' || _metric === 'areaInSqKm'">{{row.areaInSqKm}}</td>
+        <td data-label="Population" *ngIf="_metric === 'ALL' || _metric === 'population'">{{row.population}}</td>
       </tr>
       </tbody>
 
       <tfoot>
       <tr>
         <td></td>
-        <td></td>
+        <td>Total</td>
         <td *ngIf="_metric === 'ALL' || _metric === 'areaInSqKm'">{{data | total: 'areaInSqKm' }}</td>
         <td *ngIf="_metric === 'ALL' || _metric === 'population'">{{data | total: 'population' }}</td>
       </tr>
@@ -31,8 +32,8 @@
   </div>
 
   <div class="item">
-    <div class="chart" *ngIf="_metric === 'ALL' || _metric === 'areaInSqKm'" id="chart-population"></div>
-    <div class="chart" *ngIf="_metric === 'ALL' || _metric === 'population'" id="chart-areaInSqKm"></div>
+    <div class="chart" *ngIf="_metric === 'ALL' || _metric === 'population'" id="chart-population"></div>
+    <div class="chart" *ngIf="_metric === 'ALL' || _metric === 'areaInSqKm'" id="chart-areaInSqKm"></div>
   </div>
 </div>
 

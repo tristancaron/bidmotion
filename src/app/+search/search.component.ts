@@ -30,7 +30,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this._getContinents().then(_ => this._handleQueryParameters());
     this.queryForm.valueChanges.subscribe(value => {
-      this._router.navigate(['/search'], {queryParams: this.queryForm.value});
+      this._router.navigate(['/search'], {queryParams: value});
     });
   }
 
