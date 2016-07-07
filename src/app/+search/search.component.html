@@ -1,0 +1,33 @@
+<section>
+  <form [formGroup]="queryForm" (ngSubmit)="onSubmit()">
+    <label>Continent:
+      <select formControlName="continent">
+        <option value="ALL" selected>All</option>
+        <template ngFor let-continent [ngForOf]="continents">
+          <option [value]="continent">{{continent}}</option>
+        </template>
+      </select>
+    </label>
+
+    <label>Metric:
+      <select formControlName="metric">
+        <option value="ALL" selected>All</option>
+        <option value="areaInSqKm">Area in Square Kilometer</option>
+        <option value="population">Population</option>
+      </select>
+    </label>
+
+    <label>Chart max results:
+      <select formControlName="chartMaxResult">
+        <option value="5" selected>5</option>
+        <option value="10">10</option>
+        <option value="15">15</option>
+        <option value="20">20</option>
+      </select>
+    </label>
+
+    <button type="submit">Go!</button>
+  </form>
+
+  <app-search-result *ngIf="submitClicked" [continent]="queryForm.value['continent']" [metric]="queryForm.value['metric']" [chartMaxResult]="queryForm.value['chartMaxResult']"></app-search-result>
+</section>

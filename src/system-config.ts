@@ -7,6 +7,7 @@
  **********************************************************************************************/
 /** Map relative paths to URLs. */
 const map: any = {
+  'highcharts-lib': 'vendor/highcharts/highcharts.js',
 };
 
 /** User packages configuration. */
@@ -34,6 +35,9 @@ const barrels: string[] = [
   // App specific barrels.
   'app',
   'app/shared',
+  'app/home',
+  'app/search',
+  'app/components/search-result',
   /** @cli-barrel */
 ];
 
