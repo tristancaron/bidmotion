@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, REACTIVE_FORM_DIRECTIVES } from "@angular/forms";
 import { Router } from "@angular/router";
 
@@ -14,8 +14,8 @@ import { SearchResultComponent } from "../components/search-result/search-result
   styleUrls: ['search.component.css'],
   directives: [REACTIVE_FORM_DIRECTIVES, SearchResultComponent]
 })
-export class SearchComponent implements OnInit, OnDestroy {
-  submitClicked: boolean = false;
+export class SearchComponent implements OnInit {
+  private _submitClicked: boolean = false;
 
   queryForm = new FormGroup({
     continent: new FormControl('ALL'),
@@ -27,19 +27,16 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   constructor(private _geonames: GeonamesService, private _router: Router) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this._getContinents().then(_ => this._handleQueryParameters());
+
     this.queryForm.valueChanges.subscribe(value => {
       this._router.navigate(['/search'], {queryParams: value});
     });
   }
 
-  ngOnDestroy() {
-
-  }
-
-  onSubmit() {
-    this.submitClicked = true;
+  onSubmit(): void {
+    this._submitClicked = true;
     this._router.navigate(['/search'], {queryParams: this.queryForm.value});
   }
 
@@ -53,9 +50,9 @@ export class SearchComponent implements OnInit, OnDestroy {
     return this._geonames.get().map(continentNames).toPromise().then(data => this.continents = data);
   }
 
-  private _handleQueryParameters() {
+  private _handleQueryParameters(): void {
     this._router.routerState.queryParams.subscribe(params => {
-      if (!this.submitClicked) {
+      if (!this._submitClicked) {
         const filter = (key: string) => {
           const filters = {
             continent: value => this.continents.indexOf(value) !== -1 || value === 'ALL',

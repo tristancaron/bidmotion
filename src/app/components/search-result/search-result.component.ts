@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { GeonamesService } from "../../shared/geonames.service";
 import { GeonameModel } from "../../shared/geoname.model";
@@ -15,11 +15,10 @@ declare const $: Function;
   styleUrls: ['search-result.component.css'],
   pipes: [TotalPipe]
 })
-export class SearchResultComponent implements OnInit {
+export class SearchResultComponent {
   private _geonamesCall: Promise<GeonameModel[]>;
-  private _populationChart;
   private _lastTarget: HTMLSpanElement = null;
-  private _carret = {
+  private _caret = {
     up: '▴',
     down: '▾',
     center: '◂'
@@ -29,9 +28,6 @@ export class SearchResultComponent implements OnInit {
 
   constructor(private _geonames: GeonamesService) {
     this._geonamesCall = this._geonames.get().toPromise();
-  }
-
-  ngOnInit() {
   }
 
   @Input() set continent(continent: string) {
@@ -44,89 +40,78 @@ export class SearchResultComponent implements OnInit {
   @Input() set metric(metric: string) {
     this._metric = metric;
 
-    this._geonamesCall.then(data => {
-      if (this._metric === 'ALL' || this._metric === 'population') {
-        this._initPopulationChart();
-      }
-
-      if (this._metric === 'ALL' || this._metric === 'areaInSqKm') {
-        this._initAreaInSqKmChart();
-      }
-    });
+    this._geonamesCall.then(this._updateCharts.bind(this));
   }
 
   private _chartMaxResult: string;
   @Input() set chartMaxResult(chartMaxResult: string) {
     this._chartMaxResult = chartMaxResult;
-    this._geonamesCall.then(data => {
-      if (this._metric === 'ALL' || this._metric === 'population') {
-        this._initPopulationChart();
-      }
 
-      if (this._metric === 'ALL' || this._metric === 'areaInSqKm') {
-        this._initAreaInSqKmChart();
-      }
-    });
+    this._geonamesCall.then(this._updateCharts.bind(this));
+  }
+
+  private _updateCharts() {
+    if (this._metric === 'ALL' || this._metric === 'population') {
+      this._initChart('population');
+    }
+
+    if (this._metric === 'ALL' || this._metric === 'areaInSqKm') {
+      this._initChart('areaInSqKm');
+    }
   }
 
   private _filterData(data: GeonameModel[], continent: string): GeonameModel[] {
-    return data.map(value => {
-      if (continent === 'ALL' || value.continentName === continent) return value;
-
-      return null;
-    }).filter(x => x !== null);
+    return data
+      .map(v => (continent === 'ALL' || v.continentName === continent) ? v : null)
+      .filter(v => !!v);
   }
 
   sortColumn(name: string, target: HTMLSpanElement) {
     if (this._lastTarget !== target) {
-      this.data = this.data.sort((a, b) => {
-        if (isNaN(a[name])) {
-          if (a[name] < b[name])
-            return -1;
-          if (a[name] > b[name])
-            return 1;
-          return 0;
-        } else {
-          if (+a[name] < +b[name])
-            return -1;
-          if (+a[name] > +b[name])
-            return 1;
-          return 0;
-        }
-      });
+      this.data = this.data.sort(this._sortBy(name));
 
-      target.innerHTML = this._carret.up;
+      target.innerHTML = this._caret.up;
       if (this._lastTarget) {
-        this._lastTarget.innerHTML = this._carret.center;
+        this._lastTarget.innerHTML = this._caret.center;
       }
       this._lastTarget = target;
     } else {
       this.data = this.data.reverse();
 
-      target.innerHTML = target.innerHTML === this._carret.down
-        ? this._carret.up
-        : this._carret.down;
+      target.innerHTML = target.innerHTML === this._caret.down
+        ? this._caret.up
+        : this._caret.down;
     }
   }
 
-  private _initPopulationChart() {
-    let data = this.data.slice().sort((a, b) => {
-      if (+a.population > +b.population)
+  private _sortBy<T>(field: string): (a: T, b: T) => number {
+    return (a, b) => {
+      const [v1, v2] = isNaN(a[field])
+        ? [a[field], b[field]]
+        : [+a[field], +b[field]];
+
+      if (v1 < v2)
         return -1;
-      if (+a.population < +b.population)
+      if (v1 > v2)
         return 1;
       return 0;
-    });
+    }
+  }
+
+  private _initChart(name: 'areaInSqKm' | 'population') {
+    let data = this.data.slice().sort(this._sortBy(name)).reverse();
+
     let part1 = data.slice(0, +this._chartMaxResult);
+
     let result = part1.map(d => {
-        return {name: d.countryName, y: +d.population}
+      return {name: d.countryName, y: +d[name]}
     });
     result.push({
       name: 'OTHER',
-      y: +data.slice(+this._chartMaxResult).reduce((acc, row, index, arr) => `${+acc + +row.population}`, "0")
+      y: +data.slice(+this._chartMaxResult).reduce((acc, row, index, arr) => `${+acc + +row[name]}`, "0")
     });
 
-    this._populationChart = $('#chart-population').highcharts({
+    $('#chart-' + name).highcharts({
       chart: {
         plotBackgroundColor: null,
         plotBorderWidth: null,
@@ -150,64 +135,14 @@ export class SearchResultComponent implements OnInit {
         }
       },
       title: {
-        text: 'Population'
+        text: name === 'population' ? 'Population' : 'Area in Square Kilometer'
       },
       series: [{
-        name: 'Population',
+        name,
         colorByPoint: true,
         data: result
       }]
     });
   }
 
-  private _initAreaInSqKmChart() {
-    let data = this.data.slice().sort((a, b) => {
-      if (+a.areaInSqKm > +b.areaInSqKm)
-        return -1;
-      if (+a.areaInSqKm < +b.areaInSqKm)
-        return 1;
-      return 0;
-    });
-    let part1 = data.slice(0, +this._chartMaxResult);
-    let result = part1.map(d => {
-      return {name: d.countryName, y: +d.areaInSqKm}
-    });
-    result.push({
-      name: 'OTHER',
-      y: +data.slice(+this._chartMaxResult).reduce((acc, row, index, arr) => `${+acc + +row.areaInSqKm}`, "0")
-    });
-
-    this._populationChart = $('#chart-areaInSqKm').highcharts({
-      chart: {
-        plotBackgroundColor: null,
-        plotBorderWidth: null,
-        plotShadow: false,
-        type: 'pie'
-      },
-      tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-      },
-      plotOptions: {
-        pie: {
-          allowPointSelect: true,
-          cursor: 'pointer',
-          dataLabels: {
-            enabled: true,
-            format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-            style: {
-              color: 'black'
-            }
-          }
-        }
-      },
-      title: {
-        text: 'Area in Square Kilometer'
-      },
-      series: [{
-        name: 'AreaInSqKm',
-        colorByPoint: true,
-        data: result
-      }]
-    });
-  }
 }
