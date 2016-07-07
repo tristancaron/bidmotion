@@ -8,11 +8,15 @@ import { Observable } from "rxjs/Rx";
 @Injectable()
 export class GeonamesService {
   private _apiUrl = "http://api.geonames.org/countryInfoJSON?username=hydrane";
-  private _cache: [GeonameModel] = null;
+  private _cache: GeonameModel[] = null;
 
   constructor(private _http: Http) {}
 
-  get(): Observable<[GeonameModel]> {
+  get(): Observable<GeonameModel[]> {
+    if (window.location.protocol === 'https:') {
+      alert("Your browser may not support some scripts. Please, click on the shield in your address bar, and let us load scripts.")
+    }
+
     if (this._cache) {
       return Observable.of(this._cache);
     }
